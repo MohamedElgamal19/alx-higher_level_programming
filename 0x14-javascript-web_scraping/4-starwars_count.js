@@ -1,19 +1,20 @@
 #!/usr/bin/node
+
 const request = require('request');
 
-//  first argument is the API URL
-const URL = process.argv[2];
-
-request(URL, (error, response, body) => {
+request(process.argv[2], function (error, response, body) {
   if (error) {
-    console.log(error);
-  } else if (body) {
-    // Wedge Antilles is character ID 18 - use this ID for filtering the
-    // result of the API
-    const json = JSON.parse(body);
-    const charFilms = json.results.filter(
-      x => x.characters.find(y => y.match(/\/people\/18\/?$/))
-    );
-    console.log(charFilms.length);
+    console.error(error);
   }
+  /* const nb = JSON.parse(body).results.reduce((acc, elem) => {
+    acc += elem.characters.reduce((acc, character) => {
+      return (character === 'https://swapi.co/api/people/18/' ? acc + 1 : acc);
+    }, 0);
+    return (acc);
+  }, 0);
+  */
+  const nb = JSON.parse(body).results.filter((elem) => {
+    return elem.characters.filter((url) => { return url.includes('18'); }).length;
+  }).length;
+  console.log(nb);
 });
